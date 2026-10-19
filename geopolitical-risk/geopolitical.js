@@ -43,8 +43,8 @@
   }
   function forces(upHead, up, dnHead, dn) {
     return '<div class="forces">' +
-      cd('', '<span style="color:' + C.BLUE + '" class="nb">' + upHead + '</span>', '<ul>' + up.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>') +
-      cd('', '<span style="color:' + C.RED + '" class="nb">' + dnHead + '</span>', '<ul>' + dn.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>') + '</div>';
+      cd('', '<span style="color:' + C.BLUE + '" class="nb">' + upHead + '</span>', '<ul>' + up.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>', ' tight') +
+      cd('', '<span style="color:' + C.RED + '" class="nb">' + dnHead + '</span>', '<ul>' + dn.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>', ' tight') + '</div>';
   }
 
   // ---------- Sectors ----------
@@ -132,13 +132,13 @@
   var CHAN = [
     { key: 'oil', name: 'Oil', read: '$' + NOW.brent.toFixed(0) + ' Brent', rc: C.RED,
       facts: [
-        F('Brent was $72.48 on 27 Feb, the day before the war. It closed at a peak of $118.03 on 29 Apr (intraday $126), fell to $73.74 on 24 Jun as tankers moved, and settled at $109.86 on 16 Oct, its highest since May.', 'oilc'),
-        F('Hormuz flows averaged 11.6 million barrels a day in the week to 13 Oct, against a 17.2 million baseline. The EIA expects Brent to average $105 in the fourth quarter.', 'ff'),
+        F('Brent: $72.48 the day before the war (27 Feb); a $118.03 peak close (29 Apr); $73.74 as tankers moved (24 Jun); $109.86 on 16 Oct, the highest since May.', 'oilc'),
+        F('Hormuz flows: 11.6m barrels a day in the week to 13 Oct, against a 17.2m baseline. The EIA expects a $105 fourth-quarter average.', 'ff'),
         F('Brent eased to about $108 on 19 Oct after the U.S. waived new Russia sanctions.', 'st')],
       up: ['Lost Gulf supply and depleted inventories', 'Attacks on the Saudi bypass (a missile aimed at Yanbu was intercepted last week)', 'Ukrainian strikes on Russian refineries'],
       dn: ['G7 pledge of up to 100m barrels; IEA diesel release; U.S. SPR exchange', 'Sanction waivers on Russian oil', 'Demand destruction', 'Deal headlines: the 8 Apr ceasefire cut Brent 13% in a day'],
       a: 'War did not mean a straight line up. Oil has round-tripped twice, from $118 to $74 and back to $108, because diplomacy, emergency stocks and bypass routes fought the supply loss. The price now tracks the daily tanker count more than the battlefield.' },
-    { key: 'hormuz', name: 'Strait of Hormuz', read: NOW.transits + ' transits vs ' + NOW.base, rc: C.RED,
+    { key: 'hormuz', name: 'Strait of Hormuz', short: 'Hormuz', read: NOW.transits + ' transits vs ' + NOW.base, rc: C.RED,
       facts: [
         F('IMF PortWatch counted 2 transits on 11 Oct, against a pre-crisis baseline of 85 a day. About a fifth of world oil consumption passed the strait before the war.', 'st'),
         F('Iran requires ships to seek its permission to cross; the U.S. keeps a counter-blockade of Iranian oil exports. Kpler counted 20.8m barrels through the strait on 8 Oct but only 2.9m on 11 Oct.', 'aj18'),
@@ -169,7 +169,7 @@
       up: ['Energy pass-through to goods and services', 'Fertilizer to food with a 3–6 month lag', 'Airfares (+22.4%) and freight'],
       dn: ['Core inflation still moderate at 2.6%', 'Demand destruction', 'Fed tightening'],
       a: 'A supply shock: headline far above core. The risk is the 1970s pattern, where expectations follow the headline; 4.6% expectations are the warning sign.' },
-    { key: 'ust', name: 'Treasury safe-haven flows', read: NOW.y10.toFixed(2) + '% 10-year', rc: C.RED,
+    { key: 'ust', name: 'Treasury safe-haven flows', short: 'Treasuries', read: NOW.y10.toFixed(2) + '% 10-year', rc: C.RED,
       facts: [
         F('The 10-year yield rose above 5.35% on 7 Oct, its highest since 2002; the 30-year reached 5.70%. Most of the rise was in real yields: the 10-year TIPS yield went from 1.90% to 2.94% this year.', 'fb'),
         F('The Fed raised rates on 16 Sep. On 19 Oct the 10-year was 5.09%, and futures gave over 85% odds of no change at the 27–28 Oct meeting.', 'inv'),
@@ -217,130 +217,161 @@
       K.card({ tab: 'scenarios', head: 'Scenarios', dial: { v: NOW.transits, min: 0, max: 100, color: C.RED, notch: NOW.base, ends: ['0', '100'], aria: NOW.transits + ' transits a day' }, value: NOW.transits + ' / day', color: C.RED, label: 'Hormuz transits', note: 'The number that decides which scenario plays out. Gold notch: 85 before the war.' }) +
       '</div></div>';
   }
-  function framework() {
-    return '<h2>How a geopolitical event reaches a sector</h2><p class="sub">Every event travels the same four steps. At each step, forces push in both directions, so the result is never automatic.</p>' + K.tagKey() +
-      K.sections('fw', [
-        { key: 'chain', title: 'The chain, and why it is never automatic', read: 'Four steps', readColor: '#F2D27A',
-          info: {
-            oil: { h: 'What it means', html: A('“War = oil up” is a starting guess, not a rule. Oil rises only if the supply lost is larger than what spare capacity, emergency stocks, bypass routes and lower demand can replace, and only for as long as traders expect the loss to last.') },
-            ust: { h: 'What it means', html: A('“War = Treasury yields down” needs the war to scare investors about growth more than about inflation. An energy war does the opposite: it raises inflation, so yields can rise even as people seek safety.') },
-            hist: { h: 'What it means', html: A('History is on the side of reversal. Markets usually fall on uncertainty and recover once the outcome is clearer, even if the war goes on.') } },
-          body: chain('A war, blockade, sanction or tariff', 'What physically stops moving: oil, gas, fertilizer, chips, ships', 'Who pays more and who earns more; how central banks respond', 'Which industries gain or lose, and by how much') +
-            '<div class="cards three">' +
-            cd('oil', 'Oil: forces in tension', '<p><span style="color:' + C.BLUE + '" class="nb">Up:</span> supply lost, inventories low, routes blocked.</p><p><span style="color:' + C.RED + '" class="nb">Down:</span> OPEC spare capacity, emergency stocks, bypass pipelines, demand destruction, diplomacy.</p>') +
-            cd('ust', 'Treasury yields: forces in tension', '<p><span style="color:' + C.BLUE + '" class="nb">Down:</span> flight to safety, growth fears, rate-cut hopes.</p><p><span style="color:' + C.RED + '" class="nb">Up:</span> energy inflation, Fed hikes, deficits and war spending, a rising term premium.</p>') +
-            cd('hist', 'History says it reverses', F('When the Gulf War air campaign began on 17 Jan 1991, oil fell about a third in a day and stocks rallied. The S&P 500 had bottomed in October 1990.') +
-              F('On 8 Apr 2026 the ceasefire gave oil its biggest one-day drop since April 2020.', 'oilc') +
-              F('In 2022 (Ukraine) and 2026 (Iran), Treasury yields rose during the war, not fell.', 'fb')) + '</div>' },
-        { key: 'types', title: 'Six kinds of geopolitical event', small: 'Each travels a different path', read: '6 types', readColor: '#F2D27A',
-          info: EVT.reduce(function (o, e) { o[e.k] = { h: e.h, html: (e.scen ? S(e.a) : A(e.a)) }; return o; }, {}),
-          body: '<div class="cards">' + EVT.map(function (e) {
-            return cd(e.k, e.h, '<p style="color:#C2BCAF;font-size:13px">' + (e.scen ? tag('s') : '') + e.t + '</p><p><b style="color:#FFD23F">Moves:</b> ' + e.ch + '</p><p><b style="color:#FFD23F">Macro:</b> ' + e.m + '</p><p><b style="color:#FFD23F">Sectors:</b> ' + e.s + '</p>');
-          }).join('') + '</div>' }
-      ]);
+  // ---------- How it works: one panel at a time ----------
+  function fwPanel(k) {
+    if (k === 'types') {
+      return '<div class="split narrow"><div class="col evlist">' + EVT.map(function (e) {
+          return '<button class="pkc" data-pick="ev:' + e.k + '" aria-pressed="false"><span>' + e.h + '<small>' + e.t + '</small></span></button>';
+        }).join('') + '</div>' + K.picker('ev', 'e1', evPanel) + '</div>';
+    }
+    return chain('A war, blockade, sanction or tariff', 'What physically stops moving: oil, gas, fertilizer, chips, ships', 'Who pays more and who earns more; how central banks respond', 'Which industries gain or lose, and by how much') +
+      '<div class="cards three">' +
+      cd('', 'Oil: forces in tension', '<p><span style="color:' + C.BLUE + '" class="nb">Up:</span> supply lost, inventories low, routes blocked.</p><p><span style="color:' + C.RED + '" class="nb">Down:</span> spare capacity, emergency stocks, bypass pipelines, demand destruction, diplomacy.</p>' +
+        A('“War = oil up” holds only while the lost supply outruns everything that replaces it.'), ' tight') +
+      cd('', 'Treasury yields: forces in tension', '<p><span style="color:' + C.BLUE + '" class="nb">Down:</span> flight to safety, growth fears, rate-cut hopes.</p><p><span style="color:' + C.RED + '" class="nb">Up:</span> energy inflation, Fed hikes, deficits and war spending, term premium.</p>' +
+        A('An energy war raises inflation, so yields can rise even as people seek safety.'), ' tight') +
+      cd('', 'History says it reverses', F('17 Jan 1991: the Gulf War air campaign began; oil fell about a third in a day and stocks rallied.') +
+        F('8 Apr 2026: the ceasefire gave oil its biggest one-day drop since April 2020.', 'oilc') +
+        F('2022 and 2026: Treasury yields rose during the war.', 'fb'), ' tight') + '</div>';
   }
-  // Sector fan: every sector on one half-circle, ordered from most hurt (left) to most helped (right). Point75 analysis.
+  function evPanel(k) {
+    var e = EVT.filter(function (x) { return x.k === k; })[0];
+    return '<div class="pnl-h"><h3>' + e.h + '</h3><small>' + (e.scen ? tag('s') : '') + 'Example: ' + e.t + '</small></div>' +
+      '<div class="vchain" style="margin-bottom:10px">' + [['Event', e.h + ' (' + e.t + ')'], ['Supply chain', e.ch], ['Inflation · earnings', e.m], ['Sector', e.s]].map(function (x) {
+        return '<div class="ch"><small>' + x[0] + '</small>' + x[1] + '</div>'; }).join('') + '</div>' +
+      cd('', e.scen ? 'Scenario' : 'Point75 reading', e.scen ? S(e.a) : A(e.a), ' tight');
+  }
+  function framework() {
+    return K.chips('fw', [{ key: 'chain', label: 'The chain and its competing forces' }, { key: 'types', label: 'Six kinds of event', read: '6', color: '#F2D27A' }]) +
+      K.picker('fw', 'chain', fwPanel);
+  }
+
+  // ---------- Sectors: the fan is the selector ----------
   var RANK = ['airlines', 'tech', 'semis', 'industrial', 'chem', 'agri', 'banks', 'shipping', 'cmdty', 'defense', 'energy'];
   function fan() {
     return K.slot(function (el, W) {
-      var phone = W < 560, H = phone ? 230 : 270, cx = W / 2, cy = H - 34, R = Math.min(W / 2 - (phone ? 66 : 110), H - 74), n = RANK.length;
+      var phone = W < 420, R = Math.min(W / 2 - (phone ? 62 : 104), 170), H = R + 58, cx = W / 2, cy = H - 30, n = RANK.length, cur = K.picked('sec');
       var s = '<defs><linearGradient id="p75fan" x1="0" x2="1"><stop offset="0" stop-color="#FF6640"/><stop offset=".5" stop-color="#F2D27A"/><stop offset="1" stop-color="#1FC8FF"/></linearGradient></defs>';
       var arc = function (r) { return 'M' + (cx - r) + ',' + cy + ' A' + r + ',' + r + ' 0 0 1 ' + (cx + r) + ',' + cy; };
       s += '<path d="' + arc(R * .42) + '" fill="none" stroke="url(#p75fan)" stroke-width="10" stroke-linecap="round" opacity=".9"/>';
-      s += '<text x="' + (cx - R * .42) + '" y="' + (cy + 24) + '" text-anchor="middle" font-size="12.5" font-weight="800" fill="#FF6640" font-family="Manrope,sans-serif">HURT</text>' +
-        '<text x="' + (cx + R * .42) + '" y="' + (cy + 24) + '" text-anchor="middle" font-size="12.5" font-weight="800" fill="#1FC8FF" font-family="Manrope,sans-serif">HELPED</text>' +
-        '<text x="' + cx + '" y="' + (cy - 4) + '" text-anchor="middle" font-size="12" font-weight="700" fill="#C2BCAF" font-family="Manrope,sans-serif">Iran war, Oct 2026</text>';
+      s += '<text x="' + (cx - R * .42) + '" y="' + (cy + 22) + '" text-anchor="middle" font-size="12" font-weight="800" fill="#FF6640" font-family="Manrope,sans-serif">HURT</text>' +
+        '<text x="' + (cx + R * .42) + '" y="' + (cy + 22) + '" text-anchor="middle" font-size="12" font-weight="800" fill="#1FC8FF" font-family="Manrope,sans-serif">HELPED</text>' +
+        '<text x="' + cx + '" y="' + (cy - 4) + '" text-anchor="middle" font-size="11.5" font-weight="700" fill="#C2BCAF" font-family="Manrope,sans-serif">Tap a sector</text>';
       RANK.forEach(function (k, i) {
-        var sec = SECT.filter(function (x) { return x.key === k; })[0], v = V[sec.v];
+        var sec = SECT.filter(function (x) { return x.key === k; })[0], v = V[sec.v], on = k === cur;
         var ang = Math.PI - (i + .5) / n * Math.PI, c = Math.cos(ang), sn = Math.sin(ang);
         var x0 = cx + c * R * .5, y0 = cy - sn * R * .5, x1 = cx + c * R, y1 = cy - sn * R;
-        var anc = c < -.25 ? 'end' : c > .25 ? 'start' : 'middle', lx = cx + c * (R + 10), ly = cy - sn * (R + 10);
-        s += '<g class="fan-s" data-sec="' + k + '" style="cursor:pointer"><line x1="' + x0 + '" y1="' + y0 + '" x2="' + x1 + '" y2="' + y1 + '" stroke="' + v[1] + '" stroke-width="2" stroke-dasharray="2 4"/>' +
-          '<circle cx="' + x1 + '" cy="' + y1 + '" r="7" fill="' + v[1] + '" stroke="#17181B" stroke-width="2"/>' +
-          '<text x="' + lx + '" y="' + ly + '" dy="' + (sn > .9 ? '-.4em' : '.35em') + '" text-anchor="' + anc + '" font-size="' + (phone ? 12 : 14) + '" font-weight="800" fill="#EDE8DC" font-family="Manrope,sans-serif">' + (phone && sec.name === 'Semiconductors' ? 'Semis' : phone && sec.name === 'Commodities' ? 'Cmdty' : sec.name) + '</text>' +
+        var anc = c < -.25 ? 'end' : c > .25 ? 'start' : 'middle', lx = cx + c * (R + 11), ly = cy - sn * (R + 11);
+        var name = phone && sec.name === 'Semiconductors' ? 'Semis' : phone && sec.name === 'Commodities' ? 'Cmdty' : phone && sec.name === 'Agriculture' ? 'Agri' : sec.name;
+        s += '<g class="fan-s' + (on ? ' on' : '') + '" data-pick="sec:' + k + '" tabindex="0" role="button" aria-label="' + sec.name + ': ' + v[0] + '" style="cursor:pointer">' +
+          '<line x1="' + x0 + '" y1="' + y0 + '" x2="' + x1 + '" y2="' + y1 + '" stroke="' + v[1] + '" stroke-width="' + (on ? 3 : 2) + '" stroke-dasharray="' + (on ? '0' : '2 4') + '"/>' +
+          '<circle class="dot" cx="' + x1 + '" cy="' + y1 + '" r="' + (on ? 9 : 7) + '" fill="' + v[1] + '" stroke="' + (on ? '#fff' : '#17181B') + '" stroke-width="' + (on ? 3 : 2) + '"/>' +
+          '<text x="' + lx + '" y="' + ly + '" dy="' + (sn > .9 ? '-.45em' : '.35em') + '" text-anchor="' + anc + '" font-size="' + (phone ? 12 : 13.5) + '" font-weight="800" fill="' + (on ? '#FFD23F' : '#EDE8DC') + '" font-family="Manrope,sans-serif">' + name + '</text>' +
           '<circle cx="' + x1 + '" cy="' + y1 + '" r="22" fill="transparent"/></g>';
       });
-      el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="Sectors ordered from most hurt to most helped by the Iran war">' + s + '</svg>';
-      el.querySelectorAll('.fan-s').forEach(function (g) {
-        g.addEventListener('click', function () {
-          var it = document.querySelector('.sx-i[data-key="' + g.getAttribute('data-sec') + '"]');
-          if (it && !it.classList.contains('open')) it.querySelector('.sx-h').click();
-          else if (it) it.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-      });
+      el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="group" aria-label="Sectors ordered from most hurt to most helped by the Iran war">' + s + '</svg>';
     }, 'fan');
   }
+  function secOf(k) { return SECT.filter(function (x) { return x.key === k; })[0]; }
+  function secPanel(k) {
+    var s = secOf(k), v = V[s.v];
+    return '<div class="pnl-h"><h3>' + s.name + '</h3><span class="pill" style="color:' + v[1] + '">' + v[0] + '</span><small>' + s.small + '</small></div>' +
+      '<div class="vchain" style="margin-bottom:10px">' + [['Event', s.ch[0]], ['Supply chain', s.ch[1]], ['Inflation · earnings', s.ch[2]], ['Sector', s.ch[3]]].map(function (x) {
+        return '<div class="ch"><small>' + x[0] + '</small>' + x[1] + '</div>'; }).join('') + '</div>' +
+      forces('Helps the sector', s.up, 'Hurts the sector', s.dn);
+  }
+  function secRead(k) {
+    var s = secOf(k);
+    return cd('', 'Point75 reading', A(s.a) + '<p><b style="color:#FFD23F">Watch:</b> ' + s.w + '</p>' + s.now, ' tight');
+  }
   function sectors() {
-    return '<h2>Eleven sectors, one chain each</h2><p class="sub">The verdict on each row is ' + tag('a') + ' for the Iran war as of October 2026. Tap a sector on the fan, or open a row, for its chain, the forces on both sides, and the latest fact.</p>' +
-      '<div class="cd" style="padding:10px 8px 4px;margin:0 0 10px">' + fan() + '</div>' +
-      K.sections('sec', SECT.map(function (s) {
-        var v = V[s.v];
-        return { key: s.key, title: s.name, small: s.small, read: v[0], readColor: v[1],
-          info: { a: { h: 'Point75 reading', html: A(s.a) + '<p><b style="color:#FFD23F">Watch:</b> ' + s.w + '</p>' }, now: { h: 'Latest fact', html: s.now } },
-          body: chain(s.ch[0], s.ch[1], s.ch[2], s.ch[3]) + forces('Helps the sector', s.up, 'Hurts the sector', s.dn) +
-            '<div class="cards one" style="margin-top:10px">' + cd('now', 'Now', s.now) + '</div>' };
-      }), null);
+    return '<div class="split narrow">' +
+      '<div class="col"><div class="cd" style="padding:6px 6px 0">' + fan() + '</div>' + K.picker('sec', 'energy', secRead, 'read') + '</div>' +
+      '<div class="col">' + K.picker('sec', 'energy', secPanel) + '</div></div>';
+  }
+
+  // ---------- Iran now: a chip per channel ----------
+  var TL = [['28 Feb', 'U.S. and Israeli strikes on Iran begin; Supreme Leader Ali Khamenei killed'], ['Early Mar', 'Shipping through Hormuz stalls; Gulf energy sites struck'],
+    ['8 Apr', 'Two-week ceasefire; talks fail and the U.S. blockades Iranian ports (13 Apr)'], ['17 Jun', 'Memorandum to end the war; tankers transit, Brent falls to $74 (24 Jun)'],
+    ['8 Jul', 'Ceasefire collapses after Iran attacks ships in the strait'], ['Sep', 'Gulf exports recover through bypass routes; the Fed hikes (16 Sep)'],
+    ['Oct', 'Attacks surge (6 ships on 11 Oct); Brent $110 (16 Oct); Trump says he expects a deal after the 3 Nov midterms']];
+  function irPanel(k) {
+    if (k === 'tl') {
+      return '<div class="split wide">' + cd('', 'The war since 28 February 2026', '<div class="tl2">' + TL.map(function (r) { return '<div><b>' + r[0] + '</b>' + r[1] + '</div>'; }).join('') + '</div><p style="margin-top:6px">' + tag('f') + src('war') + ' ' + src('aj18') + '</p>', ' tight') +
+        cd('', 'Point75 reading', A('Markets have priced this war in two phases. In spring, the fear was physical supply; after the summer ceasefire collapsed, the fear moved to inflation and interest rates. Stocks recovered their war losses by mid-April; bonds have not.'), ' tight') + '</div>';
+    }
+    var c = CHAN.filter(function (x) { return x.key === k; })[0];
+    var upH = c.key === 'ust' ? 'Pushes yields up' : c.key === 'hormuz' ? 'Helps flows' : c.key === 'infl' ? 'Pushes inflation up' : 'Pushes up / helps';
+    var dnH = c.key === 'ust' ? 'Pushes yields down' : c.key === 'hormuz' ? 'Chokes flows' : c.key === 'infl' ? 'Holds inflation down' : 'Pushes down / hurts';
+    var up = c.up, dn = c.dn;
+    return '<div class="tri">' +
+      cd('', '<span>Facts</span><span class="nb" style="color:' + c.rc + ';letter-spacing:.02em;text-transform:none;font-size:14px">' + c.read + '</span>', c.facts.join(''), ' tight') +
+      '<div class="col">' +
+      cd('', '<span style="color:' + (c.key === 'ust' || c.key === 'infl' ? C.RED : C.BLUE) + '" class="nb">' + upH + '</span>', '<ul>' + up.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>', ' tight') +
+      cd('', '<span style="color:' + (c.key === 'ust' || c.key === 'infl' ? C.BLUE : C.RED) + '" class="nb">' + dnH + '</span>', '<ul>' + dn.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>', ' tight') +
+      '</div>' + cd('', 'Point75 reading', A(c.a), ' tight') + '</div>';
   }
   function iran() {
-    var tl = [['28 Feb', 'U.S. and Israeli strikes on Iran begin; Supreme Leader Ali Khamenei killed'], ['Early Mar', 'Shipping through Hormuz stalls; Gulf energy sites struck'],
-      ['8 Apr', 'Two-week ceasefire; talks in Islamabad fail and the U.S. blockades Iranian ports (13 Apr)'], ['17 Jun', 'Memorandum to end the war; tankers transit, Brent falls to $74 (24 Jun)'],
-      ['8 Jul', 'Ceasefire collapses after Iran attacks ships in the strait'], ['Sep', 'Gulf exports recover through bypass routes; Fed hikes (16 Sep)'],
-      ['Oct', 'Attacks surge (6 ships on 11 Oct); Brent $110 (16 Oct); Trump says he expects a deal after the 3 Nov midterms']];
-    return '<h2>Iran and the Middle East: seven channels</h2><p class="sub">Each channel shows the facts, the forces on both sides, and our reading.</p>' + K.tagKey() +
-      K.sections('ir', [{ key: 'tl', title: 'What has happened', small: 'The war since 28 February 2026', read: 'Week 34', readColor: '#F2D27A',
-        body: cd('', '', '<table><tbody>' + tl.map(function (r) { return '<tr><td style="font-weight:800;white-space:nowrap;color:#FFD23F">' + r[0] + '</td><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table><p style="margin-top:8px">' + tag('f') + src('war') + ' ' + src('aj18') + '</p>') }]
-        .concat(CHAN.map(function (c) {
-          return { key: c.key, title: c.name, read: c.read, readColor: c.rc,
-            info: { a: { h: 'Point75 reading', html: A(c.a) } },
-            body: '<div class="cards one">' + cd('a', 'Facts', c.facts.join('')) + '</div><div style="height:10px"></div>' +
-              forces(c.key === 'ust' ? 'Pushes yields up' : c.key === 'hormuz' ? 'Helps flows' : c.key === 'infl' ? 'Holds inflation down' : 'Pushes up / helps', c.up,
-                c.key === 'ust' ? 'Pushes yields down' : c.key === 'hormuz' ? 'Chokes flows' : c.key === 'infl' ? 'Pushes inflation up' : 'Pushes down / hurts', c.dn) };
-        })), 'oil');
+    return K.chips('ir', [{ key: 'tl', label: 'Timeline' }].concat(CHAN.map(function (c) { return { key: c.key, label: c.short || c.name }; }))) +
+      K.picker('ir', 'oil', function (k) {
+        var c = CHAN.filter(function (x) { return x.key === k; })[0];
+        return irPanel(k);
+      });
+  }
+
+  // ---------- Scenarios ----------
+  var SC = [
+    { key: 'deal', name: 'A. Deal and reopening', small: 'Talks after the 3 Nov midterms; Iran’s seven-day reopening plan', read: 'Brent $75–90', rc: C.BLUE,
+      oil: 'Falls fast toward $75–90, as it did in June ($118 to $74 in eight weeks). A floor above pre-war: inventories need up to two years to rebuild.',
+      rates: 'Headline inflation eases and odds of more Fed hikes fade. Yields fall less than oil, because deficits and the term premium remain.',
+      win: 'Airlines, chemicals in Europe and Asia, long-duration tech, consumers', lose: 'Energy, tankers, some defense momentum',
+      sign: 'Transits climbing back toward 85 a day; war-risk premiums falling; mines cleared' },
+    { key: 'grind', name: 'B. Grinding standoff', small: 'Today’s pattern continues: partial flows, attacks, blockade', read: 'Brent $95–115', rc: '#F2D27A',
+      oil: 'Swings with daily tanker counts and emergency releases, roughly where it has traded since July.',
+      rates: 'Inflation sticky near 3.5–4%; the Fed holds or hikes again; the 10-year stays around 5–5.5%.',
+      win: 'U.S. energy, tankers outside the Gulf, North American fertilizer, defense', lose: 'Airlines, rate-sensitive tech, import-heavy industrials',
+      sign: 'Flows stuck near 60–70% of baseline; no talks; monthly CPI above 0.4%' },
+    { key: 'esc', name: 'C. Escalation', small: 'The bypass (Yanbu, East-West pipeline) or Gulf export terminals hit', read: 'Brent $130+', rc: C.RED,
+      oil: 'Spikes above $130; Rystad has modelled $135 if talks collapse. Emergency stocks cannot replace the bypass.',
+      rates: 'The forces flip: growth fear can outweigh inflation, so yields may fall even as prices rise. The Fed faces the 1970s dilemma.',
+      win: 'Energy producers outside the Gulf, defense', lose: 'Nearly everything else; a crash becomes possible (see Market Crashes)',
+      sign: 'Strikes on Yanbu or Ras Tanura; Houthi attacks widening in the Red Sea; Gulf states drawn in further' }
+  ];
+  function scPanel(k) {
+    var s = SC.filter(function (x) { return x.key === k; })[0];
+    return '<div class="pnl-h"><h3>' + s.name + '</h3><small>' + s.small + '</small></div>' +
+      '<div class="cards">' + cd('', 'Oil', S(s.oil), ' tight') + cd('', 'Inflation and yields', S(s.rates), ' tight') +
+      cd('', 'Sectors', '<p><span style="color:' + C.BLUE + '" class="nb">Gain:</span> ' + s.win + '</p><p><span style="color:' + C.RED + '" class="nb">Lose:</span> ' + s.lose + '</p>', ' tight') +
+      cd('', 'Signposts', '<p>' + s.sign + '</p>', ' tight') + '</div>' +
+      '<p class="sub" style="margin:10px 0 0">' + tag('f') + 'Reference points: the EIA expects Brent to average $105 in the fourth quarter ' + src('ff') + '; Brent has closed between $73.74 and $118.03 since the war began ' + src('oilc') + '.</p>';
   }
   function scenarios() {
-    var SC = [
-      { key: 'deal', name: 'A. Deal and reopening', small: 'Talks after the 3 Nov midterms; Iran’s seven-day reopening plan', read: 'Brent $75–90', rc: C.BLUE,
-        oil: 'Falls fast toward $75–90, as it did in June ($118 to $74 in eight weeks). A floor above pre-war: inventories need up to two years to rebuild.',
-        rates: 'Headline inflation eases; odds of more Fed hikes fade. Yields fall less than oil, because deficits and the term premium remain.',
-        win: 'Airlines, chemicals in Europe and Asia, long-duration tech, consumers', lose: 'Energy, tankers, some defense momentum',
-        sign: 'Transits climbing back toward 85 a day; war-risk premiums falling; mines cleared' },
-      { key: 'grind', name: 'B. Grinding standoff', small: 'Today’s pattern continues: partial flows, attacks, blockade', read: 'Brent $95–115', rc: '#F2D27A',
-        oil: 'Swings with daily tanker counts and emergency releases, roughly where it has traded since July.',
-        rates: 'Inflation sticky near 3.5–4%; the Fed holds or hikes again; the 10-year stays around 5–5.5%.',
-        win: 'U.S. energy, tankers outside the Gulf, North American fertilizer, defense', lose: 'Airlines, rate-sensitive tech, import-heavy industrials',
-        sign: 'Flows stuck near 60–70% of baseline; no talks; monthly CPI above 0.4%' },
-      { key: 'esc', name: 'C. Escalation', small: 'The bypass (Yanbu, East-West pipeline) or Gulf export terminals hit', read: 'Brent $130+', rc: C.RED,
-        oil: 'Spikes above $130; Rystad has modelled $135 if talks collapse. Emergency stocks cannot replace the bypass.',
-        rates: 'The forces flip: growth fear can now outweigh inflation, so yields may fall even as prices rise. The Fed faces the 1970s dilemma.',
-        win: 'Energy producers outside the Gulf, defense', lose: 'Nearly everything else; a crash becomes possible (see /market-crashes)',
-        sign: 'Strikes on Yanbu or Ras Tanura; Houthi attacks widening in the Red Sea; Gulf states drawn in further' }
-    ];
-    return '<h2>Three scenarios</h2><p class="sub">These are ' + tag('s') + ' frames for thinking, not forecasts or probabilities. Ranges are illustrative.</p>' +
-      K.sections('sc', SC.map(function (s) {
-        return { key: s.key, title: s.name, small: s.small, read: s.read, readColor: s.rc,
-          info: { o: { h: 'What it means', html: S(s.oil) }, r: { h: 'What it means', html: S(s.rates) }, w: { h: 'Signposts', html: '<p>' + s.sign + '</p>' } },
-          body: '<div class="cards">' + cd('o', 'Oil', S(s.oil)) + cd('r', 'Inflation and yields', S(s.rates)) +
-            cd('w', 'Sectors', '<p><span style="color:' + C.BLUE + '" class="nb">Gain:</span> ' + s.win + '</p><p><span style="color:' + C.RED + '" class="nb">Lose:</span> ' + s.lose + '</p>') +
-            cd('w', 'Signposts', '<p>' + s.sign + '</p>') + '</div>' };
-      }), 'grind') +
-      '<p class="sub" style="margin-top:12px">' + tag('f') + 'Reference points: the EIA expects Brent to average $105 in the fourth quarter ' + src('ff') + '; Brent has ranged from $73.74 to $118.03 (closes) since the war began ' + src('oilc') + '.</p>';
+    return '<p class="sub" style="margin:0 0 8px">' + tag('s') + 'Frames for thinking, not forecasts or probabilities. Ranges are illustrative.</p>' +
+      K.chips('sc', SC.map(function (s) { return { key: s.key, label: s.name, read: s.read, color: s.rc }; })) + K.picker('sc', 'grind', scPanel);
   }
 
   var FOOT = 'Sources: ' + Object.keys(SRC).map(function (k) { return '<a href="' + SRC[k][1] + '" target="_blank" rel="noopener">' + SRC[k][0] + '</a>'; }).join('; ') +
     '. 1991 Gulf War market facts from standard market histories. Facts as of 19 Oct 2026; sector verdicts and readings are Point75 analysis; scenarios are illustrative, not forecasts. For education, not financial advice. © ' + new Date().getFullYear() + ' Rahul Saxena. All rights reserved.';
 
-  K.mount({
-    cls: 'p75geo', eyebrow: 'Kinetics · Geopolitical Risk', title: 'Geopolitical Risk',
-    asof: 'Updated <b>19 Oct 2026</b>',
-    lede: 'How a war, blockade, sanction or tariff travels from the event to commodities and supply chains, then to inflation and earnings, then to sectors. Every claim is labelled: ' + tag('f') + 'sourced, ' + tag('a') + 'our reading, ' + tag('s') + 'what could happen.',
-    strip: [['Brent', '$' + NOW.brent.toFixed(0), C.RED], ['Hormuz', NOW.transits + '/day', C.RED], ['10-year', NOW.y10.toFixed(2) + '%', C.RED]],
-    tabs: [
-      { key: 'takeaway', tab: 'Takeaway', html: takeaway },
-      { key: 'framework', tab: 'How it works', short: 'Chain', html: framework },
-      { key: 'sectors', tab: 'Sectors', html: sectors },
-      { key: 'iran', tab: 'Iran now', short: 'Iran', html: iran },
-      { key: 'scenarios', tab: 'Scenarios', short: 'Scenarios', html: scenarios }
-    ],
-    foot: FOOT
-  });
+  // mount(el, opts): render into el. opts.embed for a host site; opts.stickyHeader: selector of its sticky header.
+  window.P75GEO = {
+    mount: function (el, opts) {
+      opts = opts || {};
+      return K.mount({
+        host: el, embed: !!opts.embed, stickyHeader: opts.stickyHeader,
+        cls: 'p75geo', eyebrow: opts.eyebrow || 'Kinetics · Geopolitical Risk', title: opts.title || 'Geopolitical Risk',
+        asof: 'Updated <b>19 Oct 2026</b>',
+        lede: 'How a war, blockade, sanction or tariff travels from the event to commodities and supply chains, then to inflation and earnings, then to sectors. Every claim is labelled: ' + tag('f') + 'sourced, ' + tag('a') + 'our reading, ' + tag('s') + 'what could happen.',
+        strip: [['Brent', '$' + NOW.brent.toFixed(0), C.RED], ['Hormuz', NOW.transits + '/day', C.RED], ['10-year', NOW.y10.toFixed(2) + '%', C.RED]],
+        tabs: [
+          { key: 'takeaway', tab: 'Takeaway', html: takeaway },
+          { key: 'framework', tab: 'How it works', short: 'Chain', html: framework },
+          { key: 'sectors', tab: 'Sectors', html: sectors },
+          { key: 'iran', tab: 'Iran now', short: 'Iran', html: iran },
+          { key: 'scenarios', tab: 'Scenarios', html: scenarios }
+        ],
+        foot: FOOT
+      });
+    }
+  };
 })();

@@ -9,10 +9,10 @@
   var CR = [
     { key: 'c1929', name: '1929 Great Crash', short: '1929', idx: 'Dow', type: 'credit',
       pk: ['1929-09-03', 381.17], tr: ['1932-07-08', 41.22], rc: '1954-11-23',
-      cat: 'A margin-fuelled bubble broke in October 1929 (Black Thursday, Black Monday, Black Tuesday). Bank failures, a shrinking money supply and the 1930 Smoot-Hawley tariffs turned a crash into the Great Depression.',
-      rates: 'The Fed raised its discount rate to 6% in August 1929 to cool speculation. After the crash it let the money supply shrink by about a third (1929–33).',
+      cat: 'A margin-fuelled bubble broke in October 1929. Bank failures, a shrinking money supply and the 1930 Smoot-Hawley tariffs turned the crash into the Great Depression.',
+      rates: 'The Fed raised its discount rate to 6% in August 1929, then let the money supply shrink by about a third (1929–33).',
       credit: 'About 9,000 U.S. banks failed in 1930–33, with no deposit insurance until 1934.',
-      lev: 'Brokers’ loans peaked near $8.5bn in October 1929, roughly 8% of GDP; buying with 10–20% down was common.',
+      lev: 'Brokers’ loans peaked near $8.5bn in October 1929, about 8% of GDP; buying with 10–20% down was common.',
       a: 'The depth came from the policy response, not the October crash itself. Money and credit were allowed to collapse for three years.',
       af: 'Margin calls forced selling into a falling market, and failing banks took deposits and credit with them. Leverage at both ends: in the market and in the banks.' },
     { key: 'c1973', name: '1973–74 oil & inflation bear', short: '1973–74', idx: 'S&P 500', type: 'rates',
@@ -128,7 +128,7 @@
   function craters() {
     return K.slot(function (el, W) {
       var multi = W < 640;
-      var s = '', DEPTH = multi ? 150 : 250, G = multi ? 40 : 66, LAB = 'font-family="Manrope,sans-serif"';
+      var s = '', DEPTH = multi ? 150 : 228, G = multi ? 40 : 58, LAB = 'font-family="Manrope,sans-serif"';
       function crater(c, x0, wl, wr, g, depth, small) {
         var xt = x0 + wl, x1 = xt + wr, yb = g + depth * (-c.dd) / 0.9;
         var fill = c.now ? 'url(#p75cgN)' : 'url(#p75cg)', stroke = c.now ? C.GOLD : C.RED;
@@ -185,7 +185,7 @@
           var key = h.getAttribute('data-k'), r = CRATER_ROWS.filter(function (c) { return c.key === key; })[0], p = e.touches ? e.touches[0] : e;
           K.tipAt(el, r.now
             ? '<div class="t">S&P 500 now</div>' + NOW.level.toLocaleString('en-US') + ' on ' + dt(NOW.date) + '<br>Record ' + NOW.rec.toLocaleString('en-US') + ' on ' + dt(NOW.recDate) + '<br><b>' + pct(NOW_DD) + '</b> from the record'
-            : '<div class="t">' + r.name + '</div>' + r.idx + ' ' + lvl(r, r.pk[1]) + ' (' + dt(r.pk[0]) + ') → ' + lvl(r, r.tr[1]) + ' (' + dt(r.tr[0]) + ')<br><b>' + ap(r) + pct(r.dd) + '</b>: down in ' + dur(r.fallD) + ', back to the peak ' + dur(r.recD) + ' later', p.clientX, p.clientY);
+            : '<div class="t">' + r.name + '</div>' + r.idx + ' ' + lvl(r, r.pk[1]) + ' (' + dt(r.pk[0]) + ') → ' + lvl(r, r.tr[1]) + ' (' + dt(r.tr[0]) + ')<br><b>' + ap(r) + pct(r.dd) + '</b>: down in ' + dur(r.fallD) + ', back to the peak ' + dur(r.recD) + ' later<br>The climb took <b>' + (r.recD / r.fallD).toFixed(1) + '\u00d7</b> as long as the fall', p.clientX, p.clientY);
         }
         h.addEventListener('mousemove', show); h.addEventListener('touchstart', show, { passive: true });
         h.addEventListener('mouseleave', function () { K.tipOff(el); });
@@ -194,13 +194,6 @@
   }
   function craterKey() {
     return '<div class="key" style="margin:0 0 6px"><span><b style="color:#EDE8DC">Depth</b> = the fall</span><span><b style="color:#EDE8DC">Left wall</b> = time to the low</span><span><b style="color:#EDE8DC">Right wall</b> = time back to the peak</span><span style="color:#C2BCAF">Walls scaled by the square root of time. Dashed: approximate.</span></div>';
-  }
-  // the asymmetry in numbers: how many times longer the climb took than the fall
-  function climbTable() {
-    return '<div class="cards three">' + MAIN.map(function (c) {
-      var x = c.recD / c.fallD;
-      return K.cd('', '', '<span style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><b style="font-size:14px">' + c.short + '</b><span class="big" style="font-size:26px;color:' + (x > 3 ? C.RED : x < 1.5 ? C.BLUE : '#F2D27A') + '">' + x.toFixed(1) + '×</span></span><p style="font-size:13px;color:#C2BCAF">' + dur(c.fallD) + ' down, ' + dur(c.recD) + ' back</p>');
-    }).join('') + '</div>';
   }
 
   // ---------- Tabs ----------
@@ -219,77 +212,116 @@
       '</div></div>';
   }
   function drawdown() {
-    var med = median(MAIN.map(function (c) { return c.recD / c.fallD; }));
-    return '<h2>Market drawdown: the crater field</h2><p class="sub">Every crash since 1929, cut into the same ground. Hover or tap a crater for its dates.</p>' +
-      K.sections('dd', [
-        { key: 'depth', title: 'How deep, how long down, how long back', read: 'Median ' + pct(MED_DD, 0), readColor: C.RED,
-          body: craterKey() + '<div class="cd" style="padding:12px 12px 10px">' + craters() + '</div>' },
-        { key: 'climb', title: 'The climb out takes longer than the fall', small: 'Recovery time divided by the time it took to fall', read: 'Median ' + med.toFixed(1) + '×', readColor: '#F2D27A',
-          body: climbTable() }
-      ]);
+    return craterKey() + '<div class="cd" style="padding:10px 12px 8px">' + craters() + '</div>';
+  }
+
+  // Database: crater tiles pick a crash; its full record fills the panel beside them
+  function miniCrater(c, w, h) {
+    var depth = h - 18, g = 4, u = function (n) { return Math.sqrt(Math.max(n, 4)); }, k = (w - 8) / (u(8173) + u(1039));
+    var wl = Math.max(u(c.fallD) * k, 5), wr = Math.max(u(c.recD) * k, 5), x0 = (w - wl - wr) / 2, xt = x0 + wl, x1 = xt + wr, yb = g + depth * (-c.dd) / 0.9;
+    var p = 'M' + x0 + ',' + g + ' C' + (x0 + wl * .55) + ',' + g + ' ' + (xt - wl * .3) + ',' + yb + ' ' + xt + ',' + yb + ' C' + (xt + wr * .3) + ',' + yb + ' ' + (x1 - wr * .55) + ',' + g + ' ' + x1 + ',' + g;
+    return '<svg viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '" aria-hidden="true"><line x1="0" x2="' + w + '" y1="' + g + '" y2="' + g + '" stroke="#6A6C72"/>' +
+      '<path d="' + p + ' Z" fill="#FF6640" fill-opacity="' + (c.approx ? .35 : .6) + '"/><path d="' + p + '" fill="none" stroke="#FF6640" stroke-width="1.5"' + (c.approx ? ' stroke-dasharray="3 2"' : '') + '/></svg>';
+  }
+  function tiles() {
+    return '<div class="tiles-grid">' + CR.map(function (c) {
+      return '<button class="ctile" data-pick="db:' + c.key + '" aria-pressed="false">' + miniCrater(c, 64, 36) +
+        '<span class="ct-t"><b>' + c.short + '</b><em style="color:' + C.RED + '">' + ap(c) + pct(c.dd, 0) + '</em></span></button>';
+    }).join('') + '</div>';
+  }
+  function record(key) {
+    var c = CR.filter(function (x) { return x.key === key; })[0], t = TYPES[c.type];
+    return '<div class="pnl-h"><h3>' + c.name + '</h3><small>' + c.idx + ' · <span class="nb" style="color:' + t[1] + ';font-weight:800">' + t[0] + '</span></small></div>' +
+      '<div class="stats">' +
+      '<div class="st"><small>Peak</small><b>' + lvl(c, c.pk[1]) + '</b><span>' + dt(c.pk[0]) + '</span></div>' +
+      '<div class="st"><small>Trough</small><b>' + lvl(c, c.tr[1]) + '</b><span>' + dt(c.tr[0]) + '</span></div>' +
+      '<div class="st"><small>Max drawdown</small><b style="color:' + C.RED + '">' + ap(c) + pct(c.dd) + '</b><span>down in ' + dur(c.fallD) + '</span></div>' +
+      '<div class="st"><small>Recovery</small><b>' + dur(c.recD) + '</b><span>' + ap(c) + 'back ' + dt(c.rc) + '</span></div></div>' +
+      '<div class="cards">' +
+      K.cd('', 'Catalyst', '<p>' + tag('f') + c.cat + '</p>', ' tight') +
+      K.cd('', 'Interest rates', '<p>' + tag('f') + c.rates + '</p>', ' tight') +
+      K.cd('', 'Credit', '<p>' + tag('f') + c.credit + '</p>', ' tight') +
+      K.cd('', 'Leverage', '<p>' + tag('f') + c.lev + '</p>', ' tight') + '</div>';
+  }
+  function lesson(key) {
+    var c = CR.filter(function (x) { return x.key === key; })[0], x = c.recD / c.fallD;
+    return K.cd('', 'What it teaches', '<p>' + tag('a') + c.a + '</p><p style="color:#C2BCAF;font-size:13px">The climb back took <b style="color:#F2D27A">' + x.toFixed(1) + '×</b> as long as the fall.</p>', ' tight');
   }
   function database() {
-    return '<h2>The crash database</h2><p class="sub">Closing prices, price index, nominal. Recovery is the time from the low until the index closed above its old peak.</p>' +
-      K.tagKey() +
-      K.sections('db', CR.map(function (c) {
-        var t = TYPES[c.type];
-        return { key: c.key, title: c.name, small: c.idx + ' · ' + '<span style="color:' + t[1] + '" class="nb">' + t[0] + '</span>',
-          read: ap(c) + pct(c.dd, 0), readColor: C.RED,
-          info: { lesson: { h: 'What it teaches', html: '<p>' + tag('a') + c.a + '</p>' }, fuel: { h: 'What made it worse', html: '<p>' + tag('a') + c.af + '</p>' } },
-          body: '<div class="stats">' +
-            '<div class="st"><small>Peak</small><b>' + lvl(c, c.pk[1]) + '</b><span>' + dt(c.pk[0]) + '</span></div>' +
-            '<div class="st"><small>Trough</small><b>' + lvl(c, c.tr[1]) + '</b><span>' + dt(c.tr[0]) + '</span></div>' +
-            '<div class="st"><small>Max drawdown</small><b style="color:' + C.RED + '">' + ap(c) + pct(c.dd) + '</b><span>over ' + dur(c.fallD) + '</span></div>' +
-            '<div class="st"><small>Recovery</small><b>' + dur(c.recD) + '</b><span>' + (c.approx ? '≈' : '') + 'back on ' + dt(c.rc) + '</span></div></div>' +
-            '<div class="cards">' +
-            K.cd('lesson', 'Catalyst', '<p>' + tag('f') + c.cat + '</p>') +
-            K.cd('lesson', 'Interest rates', '<p>' + tag('f') + c.rates + '</p>') +
-            K.cd('fuel', 'Credit', '<p>' + tag('f') + c.credit + '</p>') +
-            K.cd('fuel', 'Leverage', '<p>' + tag('f') + c.lev + '</p>') + '</div>' };
-      }), null);
+    return '<div class="split narrow db">' +
+      '<div class="col">' + tiles() + K.picker('db', 'c2008', lesson, 'lesson') + '</div>' +
+      '<div class="col">' + K.picker('db', 'c2008', record) + '</div></div>';
+  }
+
+  // Conditions: one question at a time
+  var RATE = { c1929: ['up', 'Discount rate raised to 6% (Aug 1929)'], c1973: ['up', 'Fed funds ~6% → ~13%'], c1987: ['up', '10-year ~7% → ~10%'],
+    c1990: ['down', 'Fed already cutting from ~8%'], c2000: ['up', 'Fed funds raised to 6.5%'], c2008: ['flat', 'Topped at 5.25%; first cut Sep 2007'],
+    c2020: ['flat', 'Held at 1.5–1.75%, then cut to zero'], c2022: ['up', '0% → 4.25–4.5% in one year'], c2025: ['flat', 'Held at 4.25–4.5%'] };
+  var ARROW = { up: ['↑', C.RED, 'Rising'], down: ['↓', C.BLUE, 'Falling'], flat: ['→', '#F2D27A', 'On hold'] };
+  function condPanel(k) {
+    if (k === 'kind') {
+      var rowsT = Object.keys(TYPES).map(function (t) {
+        var a = MAIN.filter(function (c) { return c.type === t; }); if (!a.length) return '';
+        return '<tr><td><span class="nb" style="color:' + TYPES[t][1] + ';font-weight:800">' + TYPES[t][0] + '</span> <span style="color:#C2BCAF;font-size:12.5px">' + a.map(function (c) { return c.short; }).join(', ') + '</span></td>' +
+          '<td class="r num">' + pct(median(a.map(function (c) { return c.dd; })), 0) + '</td><td class="r num">' + dur(median(a.map(function (c) { return c.fallD; }))) + '</td><td class="r num">' + dur(median(a.map(function (c) { return c.totD; }))) + '</td></tr>';
+      }).join('');
+      return '<div class="split wide">' + K.cd('', 'Median by kind (two cases: their average; excludes the 2026 dip)', '<table><thead><tr><th>Kind</th><th class="r">Fall</th><th class="r">Peak to low</th><th class="r">Peak to peak</th></tr></thead><tbody>' + rowsT + '</tbody></table>') +
+        K.cd('', 'What it means', '<p>' + tag('a') + 'When leverage sits inside the lenders (1929, 2008), falling prices destroy the credit system and the crash feeds itself for years. Outside shocks (1990, 2020, 2025) were sharp but quick because policy could respond and credit kept working.</p><p>' + tag('a') + 'Inflation-and-rates bears (1973–74, 2022) are the awkward middle: the central bank cannot cut to the rescue while it is fighting inflation.</p>') + '</div>';
+    }
+    if (k === 'lev') {
+      var lev = [['1929', 8.2, 'Brokers’ loans, about 8% of GDP (approximate)'], ['2000', 3.0, 'FINRA/NYSE margin debt, March 2000'], ['2021', 3.8, 'FINRA margin debt, August 2021'], ['Now', NOW.marginGdp, 'FINRA margin debt, ' + NOW.marginMonth]];
+      return '<div class="split wide">' + K.cd('', 'Market borrowing, % of GDP', '<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div style="width:170px;flex:none">' +
+          K.dial({ v: NOW.marginGdp, min: 0, max: 9, color: C.RED, notch: 3.8, ends: ['0', '9%'], aria: 'Margin debt ' + NOW.marginGdp + '% of GDP' }) + '</div>' +
+          '<table style="flex:1;min-width:220px"><tbody>' + lev.map(function (l) {
+            return '<tr><td style="font-weight:800">' + l[0] + '</td><td class="r num" style="font-weight:800;color:' + (l[0] === 'Now' ? C.RED : '#EDE8DC') + '">' + l[1] + '%</td><td style="color:#C2BCAF;font-size:12.5px;padding-left:10px">' + l[2] + '</td></tr>';
+          }).join('') + '</tbody></table></div>') +
+        K.cd('', 'What it means', '<p>' + tag('f') + 'Margin debt is a record ' + NOW.marginGdp + '% of GDP (' + NOW.marginMonth + '), above the 2000 and 2021 peaks. Relative to market value it is about 1.6%, middling, because the market itself is so large.</p><p>' + tag('a') + 'Margin debt is fuel, not a spark. It is not inside the banks as in 2008, so the closer parallels are 2000 and 2021, where leverage deepened a fall without breaking credit.</p>') + '</div>';
+    }
+    return '<div class="split wide"><div class="rate-grid">' + MAIN.map(function (c) {
+        var r = RATE[c.key], a = ARROW[r[0]];
+        return '<div class="rg"><span class="rg-a" style="color:' + a[1] + '" aria-label="' + a[2] + '">' + a[0] + '</span><span><b>' + c.short + '</b><br>' + r[1] + '</span></div>';
+      }).join('') + '</div>' +
+      K.cd('', 'What it means', '<p>' + tag('a') + 'Rates were rising into five of the nine peaks (red arrows). In 2007 they had just topped out after a long hiking cycle. Cuts after the peak did not stop the 2000 and 2008 falls.</p><p>' + tag('a') + 'Today the Fed is raising rates into an oil shock (September 2026), which most resembles 1973 and 2022.</p>') + '</div>';
   }
   function conditions() {
-    var rowsT = Object.keys(TYPES).map(function (t) {
-      var a = MAIN.filter(function (c) { return c.type === t; }); if (!a.length) return '';
-      return '<tr><td><span class="nb" style="color:' + TYPES[t][1] + ';font-weight:800">' + TYPES[t][0] + '</span><br><span style="color:#C2BCAF;font-size:12.5px">' + a.map(function (c) { return c.short; }).join(', ') + '</span></td>' +
-        '<td class="r num">' + pct(median(a.map(function (c) { return c.dd; })), 0) + '</td><td class="r num">' + dur(median(a.map(function (c) { return c.fallD; }))) + '</td><td class="r num">' + dur(median(a.map(function (c) { return c.totD; }))) + '</td></tr>';
-    }).join('');
-    var lev = [['1929', 8.2, 'Brokers’ loans, about 8% of GDP (approximate)'], ['2000', 3.0, 'FINRA/NYSE margin debt, March 2000'], ['2021', 3.8, 'FINRA margin debt, August 2021'], ['Now', NOW.marginGdp, 'FINRA margin debt, ' + NOW.marginMonth]];
-    return '<h2>Rates, credit and leverage</h2><p class="sub">The trigger names a crash; the conditions underneath decide its depth.</p>' + K.tagKey() +
-      K.sections('cond', [
-        { key: 'kind', title: 'Depth and length by kind of crash', read: 'Credit busts worst', readColor: C.RED,
-          info: { k: { h: 'What it means', html: '<p>' + tag('a') + 'When leverage sits inside the lenders (1929, 2008), falling prices destroy the credit system and the crash feeds itself for years. Outside shocks (1990, 2020, 2025) were sharp but quick because policy could respond and credit kept working.</p><p>' + tag('a') + 'Inflation-and-rates bears (1973–74, 2022) are the awkward middle: the central bank cannot cut to the rescue while it is fighting inflation.</p>' } },
-          body: K.cd('k', 'Median by kind (two cases: their average; excludes the 2026 dip)', '<table><thead><tr><th>Kind</th><th class="r">Fall</th><th class="r">Peak to low</th><th class="r">Peak to peak</th></tr></thead><tbody>' + rowsT + '</tbody></table>') },
-        { key: 'lev', title: 'Leverage then and now', small: 'Market borrowing as a share of GDP', read: NOW.marginGdp + '% now', readColor: C.RED,
-          info: { lv: { h: 'What it means', html: '<p>' + tag('f') + 'Margin debt is a record ' + NOW.marginGdp + '% of GDP (' + NOW.marginMonth + '), above the 2000 and 2021 peaks. Relative to market value it is about 1.6%, middling, because the market itself is so large.</p><p>' + tag('a') + 'Margin debt measures fuel, not a spark: it rose for years before each peak. It is not inside the banks as in 2008, so the closer parallel is 2000 or 2021, where leverage deepened a fall without breaking credit.</p>' } },
-          body: K.cd('lv', 'Margin borrowing, % of GDP', '<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><div style="width:150px;flex:none">' +
-            K.dial({ v: NOW.marginGdp, min: 0, max: 9, color: C.RED, notch: 3.8, ends: ['0', '9%'], aria: 'Margin debt ' + NOW.marginGdp + '% of GDP' }) + '</div>' +
-            '<table style="flex:1;min-width:220px"><tbody>' + lev.map(function (l) {
-              return '<tr><td style="font-weight:800">' + l[0] + '</td><td class="r num" style="font-weight:800;color:' + (l[0] === 'Now' ? C.RED : '#EDE8DC') + '">' + l[1] + '%</td><td style="color:#C2BCAF;font-size:12.5px;padding-left:10px">' + l[2] + '</td></tr>';
-            }).join('') + '</tbody></table></div>') },
-        { key: 'rates', title: 'What rates were doing into each peak', read: 'Rising into 5 of 9', readColor: '#F2D27A',
-          info: { r: { h: 'What it means', html: '<p>' + tag('a') + 'Rates were rising into five of the nine peaks: 1929, 1973, 1987, 2000 and 2022. In 2007 they had just topped out at 5.25% after a long hiking cycle. Cuts after the peak did not stop the 2000 and 2008 falls. In 2020 and 2025 the shock came from outside and rates were not the cause.</p><p>' + tag('a') + 'Today the Fed is raising rates into an oil shock (September 2026), which most resembles 1973 and 2022.</p>' } },
-          body: '<div class="cards one">' + K.cd('r', '', '<table><thead><tr><th>Crash</th><th>Rates into the peak</th></tr></thead><tbody>' + MAIN.map(function (c) {
-            return '<tr><td style="font-weight:800;white-space:nowrap">' + c.short + '</td><td>' + c.rates + '</td></tr>';
-          }).join('') + '</tbody></table>') + '</div>' }
-      ]);
+    return K.chips('cond', [{ key: 'kind', label: 'By kind of crash', read: 'Credit worst', color: C.RED }, { key: 'lev', label: 'Leverage then and now', read: NOW.marginGdp + '%', color: C.RED }, { key: 'rates', label: 'Rates into each peak', read: '↑ 5 of 9', color: '#F2D27A' }]) +
+      K.picker('cond', 'kind', condPanel);
   }
+
+  var CSS = '.p75crash .tiles-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}' +
+    '.p75crash .ctile{display:flex;align-items:center;gap:8px;min-height:44px;padding:2px 10px 2px 6px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:#F1ECE2;font:inherit;cursor:pointer;text-align:left;transition:border-color .15s,background .15s}' +
+    '.p75crash .ctile:hover{border-color:var(--gold)}.p75crash .ctile.on{border-color:var(--gold);background:#2A2618;box-shadow:inset 3px 0 0 var(--gold)}' +
+    '.p75crash .ctile svg{flex:none}.p75crash .ct-t{display:flex;flex-direction:column;line-height:1.2;min-width:0}.p75crash .ct-t b{font-size:14px}.p75crash .ct-t em{font-style:normal;font-weight:800;font-size:13px}' +
+    '.p75crash .rate-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}' +
+    '.p75crash .rg{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:12px;background:#1B1C20;border:1px solid var(--line);font-size:13px;line-height:1.35;color:#F1ECE2}' +
+    '.p75crash .rg-a{font-size:26px;line-height:1;font-weight:800;flex:none;width:22px;text-align:center}.p75crash .rg b{font-size:14px}' +
+    '.p75crash .db .stats{margin-bottom:8px;gap:8px}.p75crash .db .st{padding:7px 10px}.p75crash .db .st b{font-size:20px}.p75crash .db .cards{gap:8px}' +
+    '@media (min-width:1100px){.p75crash .db .cards .cd{font-size:13.5px;line-height:1.45}}' +
+    '@media (max-width:880px){.p75crash .tiles-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.p75crash .rate-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}';
 
   var FOOT = 'Sources: S&P Dow Jones Indices and Dow Jones closing levels as compiled by Global Financial Data and Wikipedia (Closing milestones of the S&P 500; Black Monday 1987); ' +
     'FINRA margin statistics via thetrading.tools (margin debt/GDP); Backtest and Neo Reports (S&P 500 close 16 Oct 2026); Statista (2026 war drawdown, approximate). ' +
     'Price index, closing levels, nominal, no dividends. 1929 uses the Dow Jones Industrial Average. For education, not financial advice. © ' + new Date().getFullYear() + ' Rahul Saxena. All rights reserved.';
 
-  K.mount({
-    cls: 'p75crash', eyebrow: 'History · Market Crashes', title: 'Historical Market Crashes',
-    asof: 'Updated <b>19 Oct 2026</b>',
-    lede: 'Nine crashes since 1929, plus this year’s war dip, measured the same way: how far the index fell from its record, how long the fall lasted, how long it took to get back, and the rates, credit and leverage behind each one. Today is the 39th anniversary of Black Monday.',
-    strip: [['Median fall', pct(MED_DD, 0), C.RED], ['Now', pct(NOW_DD), '#F2D27A'], ['Margin / GDP', NOW.marginGdp + '%', C.RED]],
-    tabs: [
-      { key: 'takeaway', tab: 'Takeaway', html: takeaway },
-      { key: 'drawdown', tab: 'Drawdown', html: drawdown },
-      { key: 'database', tab: 'Database', short: 'Crashes', html: database },
-      { key: 'conditions', tab: 'Rates, credit & leverage', short: 'Conditions', html: conditions }
-    ],
-    foot: FOOT
-  });
+  // mount(el, opts): render into el. opts.stickyHeader: selector of the host site's sticky header.
+  window.P75CRASH = {
+    mount: function (el, opts) {
+      if (!document.getElementById('p75crash-css')) { var st = document.createElement('style'); st.id = 'p75crash-css'; st.textContent = CSS; document.head.appendChild(st); }
+      opts = opts || {};
+      return K.mount({
+        host: el, embed: !!opts.embed, stickyHeader: opts.stickyHeader,
+        cls: 'p75crash', eyebrow: opts.eyebrow || 'History · Market Crashes', title: opts.title || 'Historical Market Crashes',
+        asof: 'Updated <b>19 Oct 2026</b>',
+        lede: 'Nine crashes since 1929, plus this year’s war dip, measured the same way: how far the index fell from its record, how long the fall lasted, how long it took to get back, and the rates, credit and leverage behind each one. Today is the 39th anniversary of Black Monday.',
+        strip: [['Median fall', pct(MED_DD, 0), C.RED], ['Now', pct(NOW_DD), '#F2D27A'], ['Margin / GDP', NOW.marginGdp + '%', C.RED]],
+        tabs: [
+          { key: 'takeaway', tab: 'Takeaway', html: takeaway },
+          { key: 'drawdown', tab: 'Drawdown', html: drawdown },
+          { key: 'database', tab: 'Database', short: 'Crashes', html: database },
+          { key: 'conditions', tab: 'Rates, credit & leverage', short: 'Conditions', html: conditions }
+        ],
+        foot: FOOT
+      });
+    }
+  };
 })();
