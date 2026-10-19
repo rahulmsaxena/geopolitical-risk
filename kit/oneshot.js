@@ -100,8 +100,17 @@
     '.p75x .wim{font-size:12.5px;font-weight:800;color:var(--gold2);white-space:nowrap;letter-spacing:.02em;text-transform:none}' +
     '.p75x .cd .big{font-family:"Hedvig Letters Serif",Georgia,serif;font-size:30px;line-height:1.05;display:block;margin:2px 0 4px}' +
     // tags: Fact / Point75 analysis / Scenario (shape + colour, so never colour alone)
-    '.p75x .tg{display:inline-block;margin-right:7px;padding:1px 8px;border-radius:99px;font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;vertical-align:1px;white-space:nowrap}' +
-    '.p75x .tg.f{background:#EDE8DC;color:#111214}.p75x .tg.a{background:var(--gold);color:#111214}.p75x .tg.s{border:1.5px dashed #EDE8DC;color:#EDE8DC;padding:0 7px}' +
+    // Fact / Point75 analysis / Scenario: a small lettered dot beside each claim, the words once in the key
+    '.p75x .tg{display:inline-grid;place-items:center;width:17px;height:17px;margin-right:7px;border-radius:50%;font-size:10px;font-weight:800;line-height:1;vertical-align:1px;cursor:help;flex:none}' +
+    '.p75x .tg.f{background:#EDE8DC;color:#111214}.p75x .tg.a{background:var(--gold);color:#111214}.p75x .tg.s{border:1.5px dashed #EDE8DC;color:#EDE8DC}' +
+    '.p75x .tgf{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.p75x .tgf .tg{margin-right:0}' +
+    '.p75x .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}' +
+    // one-line takeaway at the top of a panel, with the detail folded under it
+    '.p75x .hl1{margin:0 0 10px;font-family:"Hedvig Letters Serif",Georgia,serif;font-size:20px;line-height:1.35;color:#fff}.p75x .hl1 .tg{vertical-align:3px}' +
+    '.p75x .more{margin-top:8px}.p75x .more-b{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:99px;border:1px solid rgba(201,162,39,.55);background:rgba(201,162,39,.06);color:var(--gold2);font:inherit;font-size:13.5px;font-weight:800;cursor:pointer}' +
+    '.p75x .more-b:hover{background:rgba(201,162,39,.18)}.p75x .more-b i{width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .25s}' +
+    '.p75x .more.on .more-b i{transform:translateY(1px) rotate(-135deg)}' +
+    '.p75x .more-c{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.4,0,.2,1)}.p75x .more.on .more-c{grid-template-rows:1fr}.p75x .more-c > div{min-height:0;overflow:hidden}.p75x .more-c > div > :first-child{margin-top:10px}' +
     '.p75x .key{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:13px;color:var(--soft);margin:0 0 10px}' +
     // pills, chain, tables
     '.p75x .pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid currentColor;white-space:nowrap}' +
@@ -171,6 +180,7 @@
     // desktop: the Takeaway (title, intro, tabs, headline, cards) fits ~1300 x 546 without scrolling
     '@media (min-width:1100px){.p75x .cd.tight{font-size:13.5px;line-height:1.42;padding:9px 12px}.p75x .cd.tight li{margin-bottom:2px}.p75x .cd.tight p{margin-bottom:4px}.p75x .vchain .ch{padding:5px 12px;font-size:13px}.p75x .pnl-h{margin-bottom:6px}.p75x .pnl-h h3{font-size:20px}.p75x .hd-t{margin-top:8px}.p75x .tk{gap:10px}.p75x .tk-head{font-size:22px;padding:12px 20px;line-height:1.38}.p75x .ovc{padding:12px 16px;gap:4px}.p75x .ovn{font-size:13.5px;line-height:1.4}.p75x .view{padding-top:10px}.p75x .tabs{margin-top:8px}}' +
     '@media (max-width:1099px){.p75x .ov{grid-template-columns:repeat(2,minmax(0,1fr))}}' +
+    '.p75x .tri.ir-more{grid-template-columns:repeat(3,minmax(0,1fr))}' +
     '@media (max-width:1099px){.p75x .tri{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.p75x .tri > .cd:last-child{grid-column:1 / -1}}' +
     '@media (max-width:880px){.p75x .secsplit > .col:first-child{display:contents}.p75x .secsplit .sec-fan{order:0}.p75x .secsplit .sec-detail{order:1}.p75x .secsplit .sec-read{order:2}}' +
     '@media (max-width:880px){.p75x .tri,.p75x .split,.p75x .split.wide,.p75x .split.narrow{grid-template-columns:minmax(0,1fr)}.p75x .sx-g{grid-template-columns:minmax(0,1fr)}.p75x .sx-info{display:none}.p75x .lede,.p75x .sub{text-align:left}' +
@@ -195,8 +205,18 @@
 
   // ---------- Tags ----------
   var TAGS = { f: 'Fact', a: 'Point75 analysis', s: 'Scenario' };
-  function tag(k) { return '<span class="tg ' + k + '">' + TAGS[k] + '</span>'; }
-  function tagKey() { return '<div class="key">' + tag('f') + '<span>sourced, checkable</span>' + tag('a') + '<span>our reading of the facts</span>' + tag('s') + '<span>what could happen, not a forecast</span></div>'; }
+  var LETTER = { f: 'F', a: 'A', s: 'S' };
+  function tag(k) { return '<span class="tg ' + k + '" title="' + TAGS[k] + '" aria-hidden="true">' + LETTER[k] + '</span><span class="sr">' + TAGS[k] + ': </span>'; }
+  function tagFull(k) { return '<span class="tgf">' + tag(k) + '<b>' + TAGS[k] + '</b></span>'; }
+  function tagKey() { return '<div class="key">' + tagFull('f') + '<span>sourced</span>' + tagFull('a') + '<span>our reading</span>' + tagFull('s') + '<span>what could happen</span></div>'; }
+  // one-line takeaway (Point75 analysis) that opens a panel
+  function head(t) { return '<p class="hl1">' + tag('a') + t + '</p>'; }
+  // detail folded under a toggle; stays open across picks once the reader opens it
+  var MORE_ON = false;
+  function more(label, html) {
+    return '<div class="more' + (MORE_ON ? ' on' : '') + '"><button class="more-b" aria-expanded="' + MORE_ON + '"><span>' + label + '</span><i aria-hidden="true"></i></button>' +
+      '<div class="more-c"><div>' + html + '</div></div></div>';
+  }
   function col(t, c) { return '<span style="color:' + c + '">' + t + '</span>'; }
 
   // ---------- Dials: tools-style speedometer (220° sweep, slim track, fill from rest, tapered needle, hub) ----------
@@ -382,6 +402,8 @@
       if (e.target.closest('[data-unfold]')) { FOLD = false; host.classList.remove('folded'); window.scrollTo({ top: Math.max(0, topOf() - 8), behavior: 'smooth' }); return; }
       if (e.target.closest('.sheet-x')) { host.querySelector('.sheet').classList.remove('on'); return; }
       var ft = e.target.closest('.foot'); if (ft && !e.target.closest('a')) { ft.classList.toggle('full'); return; }
+      var mb = e.target.closest('.more-b');
+      if (mb) { var m = mb.parentNode; MORE_ON = !m.classList.contains('on'); host.querySelectorAll('.more').forEach(function (x) { x.classList.toggle('on', MORE_ON); x.querySelector('.more-b').setAttribute('aria-expanded', String(MORE_ON)); }); return; }
       var pk = e.target.closest('[data-pick]');
       if (pk) { var pp = pk.getAttribute('data-pick').split(':'); pick(pp[0], pp[1]); return; }
       var h = e.target.closest('.sx-h');
@@ -434,6 +456,6 @@
   }
 
   window.P75KIT = { mount: mount, dial: dial, card: card, sections: sections, cd: cd, tag: tag, tagKey: tagKey, col: col, esc: esc,
-    slot: slot, tipAt: tipAt, tipOff: tipOff, sweep: sweep, picker: picker, picked: picked, chips: chips,
+    tagFull: tagFull, head: head, more: more, slot: slot, tipAt: tipAt, tipOff: tipOff, sweep: sweep, picker: picker, picked: picked, chips: chips,
     C: { BLUE: BLUE, RED: RED, NEUT: NEUT, GOLD: GOLD, AMBER: AMBER, LIME: LIME, GREEN: GREEN } };
 })();

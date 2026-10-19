@@ -229,9 +229,22 @@
         '<span class="ct-t"><b>' + c.short + '</b><em style="color:' + C.RED + '">' + ap(c) + pct(c.dd, 0) + '</em></span></button>';
     }).join('') + '</div>';
   }
+  // one-line takeaway per crash (Point75 analysis); the full lesson sits in the database fields and the side card
+  var HEAD = {
+    c1929: 'The depth came from the policy response, not the October crash.',
+    c1973: 'A supply shock became an inflation shock, and rates did the rest.',
+    c1987: 'Fast and frightening, but credit held and the economy barely noticed.',
+    c1990: 'The market priced the uncertainty, not the war: stocks bottomed before the air war began.',
+    c2000: 'A valuation bust: rate cuts can\u2019t fix a price that was too high.',
+    c2008: 'The template for a credit crash: the lenders themselves broke.',
+    c2020: 'The deepest 33 days on record, undone by an immediate, huge policy response.',
+    c2022: 'A rate shock: stocks and bonds fell together and the haven failed.',
+    c2025: 'A policy-made shock that policy reversed within three months.',
+    c2026: 'A war that shut the key oil route cost the index about 8% for a month.'
+  };
   function record(key) {
     var c = CR.filter(function (x) { return x.key === key; })[0], t = TYPES[c.type];
-    return '<div class="pnl-h"><h3>' + c.name + '</h3><small>' + c.idx + ' · <span class="nb" style="color:' + t[1] + ';font-weight:800">' + t[0] + '</span></small></div>' +
+    return '<div class="pnl-h"><h3>' + c.name + '</h3><small>' + c.idx + ' · <span class="nb" style="color:' + t[1] + ';font-weight:800">' + t[0] + '</span></small></div>' + K.head(HEAD[c.key]) +
       '<div class="stats">' +
       '<div class="st"><small>Peak</small><b>' + lvl(c, c.pk[1]) + '</b><span>' + dt(c.pk[0]) + '</span></div>' +
       '<div class="st"><small>Trough</small><b>' + lvl(c, c.tr[1]) + '</b><span>' + dt(c.tr[0]) + '</span></div>' +
@@ -245,7 +258,7 @@
   }
   function lesson(key) {
     var c = CR.filter(function (x) { return x.key === key; })[0], x = c.recD / c.fallD;
-    return K.cd('', 'What it teaches', '<p>' + tag('a') + c.a + '</p><p style="color:#C2BCAF;font-size:13px">The climb back took <b style="color:#F2D27A">' + x.toFixed(1) + '×</b> as long as the fall.</p>', ' tight');
+    return K.cd('', 'What made it worse', '<p>' + tag('a') + c.af + '</p><p style="color:#C2BCAF;font-size:13px">The climb back took <b style="color:#F2D27A">' + x.toFixed(1) + '×</b> as long as the fall.</p>', ' tight');
   }
   function database() {
     return '<div class="split narrow db">' +
