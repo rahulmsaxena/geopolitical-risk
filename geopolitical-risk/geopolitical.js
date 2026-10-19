@@ -250,7 +250,7 @@
   var RANK = ['airlines', 'tech', 'semis', 'industrial', 'chem', 'agri', 'banks', 'shipping', 'cmdty', 'defense', 'energy'];
   function fan() {
     return K.slot(function (el, W) {
-      var phone = W < 420, R = Math.min(W / 2 - (phone ? 62 : 104), 170), H = R + 58, cx = W / 2, cy = H - 30, n = RANK.length, cur = K.picked('sec');
+      var phone = W < 420, R = Math.min(W / 2 - (phone ? 62 : 104), 145), H = R + 56, cx = W / 2, cy = H - 30, n = RANK.length, cur = K.picked('sec');
       var s = '<defs><linearGradient id="p75fan" x1="0" x2="1"><stop offset="0" stop-color="#FF6640"/><stop offset=".5" stop-color="#F2D27A"/><stop offset="1" stop-color="#1FC8FF"/></linearGradient></defs>';
       var arc = function (r) { return 'M' + (cx - r) + ',' + cy + ' A' + r + ',' + r + ' 0 0 1 ' + (cx + r) + ',' + cy; };
       s += '<path d="' + arc(R * .42) + '" fill="none" stroke="url(#p75fan)" stroke-width="10" stroke-linecap="round" opacity=".9"/>';
@@ -285,9 +285,9 @@
     return cd('', 'Point75 reading', A(s.a) + '<p><b style="color:#FFD23F">Watch:</b> ' + s.w + '</p>' + s.now, ' tight');
   }
   function sectors() {
-    return '<div class="split narrow">' +
-      '<div class="col"><div class="cd" style="padding:6px 6px 0">' + fan() + '</div>' + K.picker('sec', 'energy', secRead, 'read') + '</div>' +
-      '<div class="col">' + K.picker('sec', 'energy', secPanel) + '</div></div>';
+    return '<div class="split narrow secsplit">' +
+      '<div class="col"><div class="cd sec-fan" style="padding:2px 4px 0">' + fan() + '</div><div class="sec-read">' + K.picker('sec', 'energy', secRead, 'read') + '</div></div>' +
+      '<div class="col sec-detail">' + K.picker('sec', 'energy', secPanel) + '</div></div>';
   }
 
   // ---------- Iran now: a chip per channel ----------
@@ -305,7 +305,7 @@
     var dnH = c.key === 'ust' ? 'Pushes yields down' : c.key === 'hormuz' ? 'Chokes flows' : c.key === 'infl' ? 'Holds inflation down' : 'Pushes down / hurts';
     var up = c.up, dn = c.dn;
     return '<div class="tri">' +
-      cd('', '<span>Facts</span><span class="nb" style="color:' + c.rc + ';letter-spacing:.02em;text-transform:none;font-size:14px">' + c.read + '</span>', c.facts.join(''), ' tight') +
+      cd('', 'Facts<span class="nb" style="color:' + c.rc + ';letter-spacing:.02em;text-transform:none;font-size:14px;margin-left:10px">' + c.read + '</span>', c.facts.join(''), ' tight') +
       '<div class="col">' +
       cd('', '<span style="color:' + (c.key === 'ust' || c.key === 'infl' ? C.RED : C.BLUE) + '" class="nb">' + upH + '</span>', '<ul>' + up.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>', ' tight') +
       cd('', '<span style="color:' + (c.key === 'ust' || c.key === 'infl' ? C.BLUE : C.RED) + '" class="nb">' + dnH + '</span>', '<ul>' + dn.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>', ' tight') +

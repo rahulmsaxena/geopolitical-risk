@@ -148,7 +148,7 @@
     '.p75x .vchain{display:flex;flex-direction:column;gap:0}' +
     '.p75x .vchain .ch{border-radius:0;border:1px solid var(--line);border-top:0;padding:7px 12px}.p75x .vchain .ch:first-child{border-top:1px solid var(--line);border-radius:12px 12px 0 0}.p75x .vchain .ch:last-child{border-radius:0 0 12px 12px}' +
     '.p75x .vchain .ch:after{display:none}.p75x .vchain .ch small{display:inline-block;width:auto;margin:0 8px 0 0}' +
-    '.p75x .cd ul{margin:0;padding-left:18px}.p75x .cd li{margin:0 0 3px}' +
+    '.p75x .cd ul{margin:0;padding-left:18px;list-style:disc}.p75x .cd li::marker{color:#8A8D93}.p75x .cd li{margin:0 0 3px}' +
     '.p75x .cd.tight{padding:10px 12px;font-size:14px;line-height:1.5}' +
     '.p75x .tl2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px}.p75x .tl2 b{display:block;color:#FFD23F;font-size:12px;letter-spacing:.08em;text-transform:uppercase}' +
     '@media (max-width:560px){.p75x .tl2{grid-template-columns:minmax(0,1fr)}}' +
@@ -157,6 +157,11 @@
     '.p75x .tile{cursor:pointer}.p75x .tile .tbox{transition:stroke .15s,fill .15s}.p75x .tile:hover .tbox{stroke:#C9A227}.p75x .tile.on .tbox{stroke:#C9A227;stroke-width:2;fill:#2A2618}' +
     '.p75x .fan-s.on circle.dot{stroke:#fff;stroke-width:3}.p75x .fan-s.on text{fill:#FFD23F}' +
     // embedded in a host site: the host sets the column and the sticky header
+    '@media (min-width:1100px){.p75x.embed .fold{margin-top:4px}.p75x.embed .tabs{margin-top:6px;padding-top:4px;padding-bottom:4px}.p75x.embed .view{padding-top:8px}.p75x.embed .hd-t{margin-top:4px}.p75x.embed .tk{gap:8px}.p75x.embed .tk-head{padding:10px 18px}.p75x.embed .ovc{padding:10px 14px}}' +
+    '.p75x .tabs .fmini{display:none;margin-left:auto;flex:none;align-items:center;gap:16px;min-height:44px;padding:0 6px 0 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:inherit;font:inherit;cursor:pointer}' +
+    '.p75x .tabs .fmini:hover{border-color:var(--gold)}.p75x .tabs .fmini .fi b{font-size:19px}' +
+    // desktop: once folded, the readings and the unfold arrow ride in the tab bar instead of taking a row of their own
+    '@media (min-width:1100px){.p75x.folded .fstrip{grid-template-rows:0fr;opacity:0;visibility:hidden}.p75x.folded .tabs .fmini{display:flex}}' +
     '.p75x.embed{min-height:0;background:transparent}.p75x.embed .wrap{max-width:none;padding:0 0 32px}.p75x.embed .tabs{margin-left:0;margin-right:0;padding-left:0;padding-right:0}' +
     // phone sheet
     '.p75x .sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;max-height:70vh;overflow:auto;padding:18px 18px 24px;background:#1D1E22;border-top:2px solid var(--gold);border-radius:16px 16px 0 0;font-size:15px;line-height:1.55;color:#F1ECE2;transform:translateY(105%);visibility:hidden;transition:transform .3s,visibility 0s .3s}' +
@@ -167,6 +172,7 @@
     '@media (min-width:1100px){.p75x .cd.tight{font-size:13.5px;line-height:1.42;padding:9px 12px}.p75x .cd.tight li{margin-bottom:2px}.p75x .cd.tight p{margin-bottom:4px}.p75x .vchain .ch{padding:5px 12px;font-size:13px}.p75x .pnl-h{margin-bottom:6px}.p75x .pnl-h h3{font-size:20px}.p75x .hd-t{margin-top:8px}.p75x .tk{gap:10px}.p75x .tk-head{font-size:22px;padding:12px 20px;line-height:1.38}.p75x .ovc{padding:12px 16px;gap:4px}.p75x .ovn{font-size:13.5px;line-height:1.4}.p75x .view{padding-top:10px}.p75x .tabs{margin-top:8px}}' +
     '@media (max-width:1099px){.p75x .ov{grid-template-columns:repeat(2,minmax(0,1fr))}}' +
     '@media (max-width:1099px){.p75x .tri{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.p75x .tri > .cd:last-child{grid-column:1 / -1}}' +
+    '@media (max-width:880px){.p75x .secsplit > .col:first-child{display:contents}.p75x .secsplit .sec-fan{order:0}.p75x .secsplit .sec-detail{order:1}.p75x .secsplit .sec-read{order:2}}' +
     '@media (max-width:880px){.p75x .tri,.p75x .split,.p75x .split.wide,.p75x .split.narrow{grid-template-columns:minmax(0,1fr)}.p75x .sx-g{grid-template-columns:minmax(0,1fr)}.p75x .sx-info{display:none}.p75x .lede,.p75x .sub{text-align:left}' +
       '.p75x .hd-t .eyebrow{flex-basis:100%}.p75x .stats{grid-template-columns:repeat(2,minmax(0,1fr))}.p75x .cards.three{grid-template-columns:minmax(0,1fr)}' +
       '.p75x .chain{grid-template-columns:minmax(0,1fr)}.p75x .ch,.p75x .ch + .ch{border:1px solid var(--line);border-radius:0;border-top:0}.p75x .ch:first-child{border-radius:12px 12px 0 0;border-top:1px solid var(--line)}.p75x .ch:last-child{border-radius:0 0 12px 12px}' +
@@ -343,7 +349,9 @@
           var on = t.key === c.key;
           return '<a role="tab" class="tab' + (on ? ' on' : '') + '" href="#' + t.key + '" data-tab="' + t.key + '" aria-selected="' + on + '">' +
             (t.short ? '<span class="tl">' + t.tab + '</span><span class="ts" aria-hidden="true">' + t.short + '</span>' : t.tab) + '</a>';
-        }).join('') + '</nav>' +
+        }).join('') + '<button class="fmini" data-unfold aria-label="Show the title and introduction">' +
+        cfg.strip.map(function (s, i) { return '<span class="fi' + (i ? ' x2' : '') + '"><small>' + s[0] + '</small><b style="color:' + s[2] + '">' + s[1] + '</b></span>'; }).join('') +
+        '<span class="fo-c" aria-hidden="true"></span></button></nav>' +
         '<div class="view" role="tabpanel" aria-label="' + esc(c.tab) + '">' +
         (FROM_TK && c.key !== keys[0] ? '<a class="tk-back" href="#' + keys[0] + '" data-tab="' + keys[0] + '"><span aria-hidden="true">←</span> Back to the takeaway</a>' : '') +
         c.html() + '</div>' +
