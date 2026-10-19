@@ -3,7 +3,9 @@
    with an info screen beside them, tools-style dials with an even needle sweep, and Fact / Point75 analysis / Scenario tags.
    Follows ONE-SHOT.md in point75-site. (c) Rahul Saxena. All rights reserved. */
 (function () {
-  if (window.P75KIT) return;
+  // Kit version: page modules check it and reload the kit when a cached copy is older than they need.
+  var KIT_V = 3, SRC = (document.currentScript && document.currentScript.src) || '';
+  if (window.P75KIT && (window.P75KIT.v || 0) >= KIT_V) return;
   var BLUE = '#1FC8FF', RED = '#FF6640', NEUT = '#9AA0A6', GOLD = '#C9A227', AMBER = '#FFB224', LIME = '#B6E04A', GREEN = '#2BFF88';
 
   var CSS =
@@ -196,11 +198,12 @@
 
   var esc = function (s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
   function once() {
-    if (document.getElementById('p75x-css')) return;
+    var old = document.getElementById('p75x-css');
+    if (old) { if (old.getAttribute('data-v') !== String(KIT_V)) { old.textContent = CSS; old.setAttribute('data-v', String(KIT_V)); } return; }
     var f = document.createElement('link'); f.rel = 'stylesheet';
     f.href = 'https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=Manrope:wght@400;500;600;700;800&display=swap';
     document.head.appendChild(f);
-    var st = document.createElement('style'); st.id = 'p75x-css'; st.textContent = CSS; document.head.appendChild(st);
+    var st = document.createElement('style'); st.id = 'p75x-css'; st.setAttribute('data-v', String(KIT_V)); st.textContent = CSS; document.head.appendChild(st);
   }
 
   // ---------- Tags ----------
@@ -455,7 +458,7 @@
     };
   }
 
-  window.P75KIT = { mount: mount, dial: dial, card: card, sections: sections, cd: cd, tag: tag, tagKey: tagKey, col: col, esc: esc,
+  window.P75KIT = { v: KIT_V, src: SRC, mount: mount, dial: dial, card: card, sections: sections, cd: cd, tag: tag, tagKey: tagKey, col: col, esc: esc,
     tagFull: tagFull, head: head, more: more, slot: slot, tipAt: tipAt, tipOff: tipOff, sweep: sweep, picker: picker, picked: picked, chips: chips,
     C: { BLUE: BLUE, RED: RED, NEUT: NEUT, GOLD: GOLD, AMBER: AMBER, LIME: LIME, GREEN: GREEN } };
 })();

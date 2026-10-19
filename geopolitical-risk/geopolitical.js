@@ -354,10 +354,23 @@
     '. 1991 Gulf War market facts from standard market histories. Facts as of 19 Oct 2026; sector verdicts and readings are Point75 analysis; scenarios are illustrative, not forecasts. For education, not financial advice. © ' + new Date().getFullYear() + ' Rahul Saxena. All rights reserved.';
 
   // mount(el, opts): render into el. opts.embed for a host site; opts.stickyHeader: selector of its sticky header.
+
+  // The page needs kit v3 or newer. A browser tab opened before an update can hold an older cached kit,
+  // so load a fresh one first instead of failing on a missing function.
+  var NEED_KIT = 3;
+  function bind() { K = window.P75KIT; C = K.C; tag = K.tag; col = K.col; cd = K.cd; }
+  function withKit(go) {
+    if (window.P75KIT && (window.P75KIT.v || 0) >= NEED_KIT) { bind(); return go(); }
+    var s = document.createElement('script');
+    s.src = ((window.P75KIT && window.P75KIT.src) || '/macro/oneshot.js').split('?')[0] + '?kit=' + NEED_KIT + '&t=' + Date.now();
+    s.onload = function () { bind(); go(); };
+    document.head.appendChild(s);
+  }
   window.P75GEO = {
     mount: function (el, opts) {
       opts = opts || {};
-      return K.mount({
+      var h = { dead: false, inner: null, destroy: function () { h.dead = true; if (h.inner) h.inner.destroy(); } };
+      withKit(function () { if (h.dead) return; h.inner = K.mount({
         host: el, embed: !!opts.embed, stickyHeader: opts.stickyHeader,
         cls: 'p75geo', eyebrow: opts.eyebrow || 'Kinetics · Geopolitical Risk', title: opts.title || 'Geopolitical Risk',
         asof: 'Updated <b>19 Oct 2026</b>',
@@ -371,7 +384,8 @@
           { key: 'scenarios', tab: 'Scenarios', html: scenarios }
         ],
         foot: FOOT
-      });
+      }); });
+      return h;
     }
   };
 })();

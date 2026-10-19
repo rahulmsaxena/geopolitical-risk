@@ -317,11 +317,26 @@
     'Price index, closing levels, nominal, no dividends. 1929 uses the Dow Jones Industrial Average. For education, not financial advice. © ' + new Date().getFullYear() + ' Rahul Saxena. All rights reserved.';
 
   // mount(el, opts): render into el. opts.stickyHeader: selector of the host site's sticky header.
+
+  // The page needs kit v3 or newer. A browser tab opened before an update can hold an older cached kit,
+  // so load a fresh one first instead of failing on a missing function.
+  var NEED_KIT = 3;
+  function bind() { K = window.P75KIT; C = K.C; tag = K.tag; col = K.col; }
+  function withKit(go) {
+    if (window.P75KIT && (window.P75KIT.v || 0) >= NEED_KIT) { bind(); return go(); }
+    var s = document.createElement('script');
+    s.src = ((window.P75KIT && window.P75KIT.src) || '/macro/oneshot.js').split('?')[0] + '?kit=' + NEED_KIT + '&t=' + Date.now();
+    s.onload = function () { bind(); go(); };
+    document.head.appendChild(s);
+  }
   window.P75CRASH = {
     mount: function (el, opts) {
-      if (!document.getElementById('p75crash-css')) { var st = document.createElement('style'); st.id = 'p75crash-css'; st.textContent = CSS; document.head.appendChild(st); }
+      var st = document.getElementById('p75crash-css');
+      if (!st) { st = document.createElement('style'); st.id = 'p75crash-css'; document.head.appendChild(st); }
+      st.textContent = CSS;
       opts = opts || {};
-      return K.mount({
+      var h = { dead: false, inner: null, destroy: function () { h.dead = true; if (h.inner) h.inner.destroy(); } };
+      withKit(function () { if (h.dead) return; h.inner = K.mount({
         host: el, embed: !!opts.embed, stickyHeader: opts.stickyHeader,
         cls: 'p75crash', eyebrow: opts.eyebrow || 'History · Market Crashes', title: opts.title || 'Historical Market Crashes',
         asof: 'Updated <b>19 Oct 2026</b>',
@@ -334,7 +349,8 @@
           { key: 'conditions', tab: 'Rates, credit & leverage', short: 'Conditions', html: conditions }
         ],
         foot: FOOT
-      });
+      }); });
+      return h;
     }
   };
 })();
