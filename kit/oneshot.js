@@ -4,7 +4,7 @@
    Follows ONE-SHOT.md in point75-site. (c) Rahul Saxena. All rights reserved. */
 (function () {
   // Kit version: page modules check it and reload the kit when a cached copy is older than they need.
-  var KIT_V = 3, SRC = (document.currentScript && document.currentScript.src) || '';
+  var KIT_V = 4, SRC = (document.currentScript && document.currentScript.src) || '';
   if (window.P75KIT && (window.P75KIT.v || 0) >= KIT_V) return;
   var BLUE = '#1FC8FF', RED = '#FF6640', NEUT = '#9AA0A6', GOLD = '#C9A227', AMBER = '#FFB224', LIME = '#B6E04A', GREEN = '#2BFF88';
 
@@ -65,7 +65,7 @@
     '.p75x a.tk-back:hover{background:rgba(201,162,39,.22)}' +
     // dials
     '.p75x .p75n{transition:transform 1.25s cubic-bezier(.37,0,.3,1)}' +
-    '.p75x .p75f{stroke-dashoffset:100;transition:stroke-dashoffset 1.25s cubic-bezier(.37,0,.3,1)}.p75x .go-sweep .p75f{stroke-dashoffset:0}' +
+    '.p75x .p75f{stroke-dashoffset:100;transition:stroke-dashoffset 1.25s cubic-bezier(.37,0,.3,1)}.p75x.go-sweep .p75f,.p75x .go-sweep .p75f{stroke-dashoffset:0}' +
     // sections
     '.p75x .sx{display:flex;flex-direction:column;gap:8px}' +
     '.p75x .sx-i{border-radius:14px;background:var(--panel);border:1px solid var(--line)}.p75x .sx-i.open{border-color:#4A4536}' +
@@ -233,7 +233,7 @@
   function dial(o) {
     var ang = function (v) { return -DSWEEP / 2 + (Math.max(o.min, Math.min(o.max, v)) - o.min) / (o.max - o.min) * DSWEEP; };
     var rest = o.rest == null ? o.min : o.rest, a0 = ang(rest), a1 = ang(o.v), sw = 11, svg = '';
-    svg += '<path d="' + dArc(-DSWEEP / 2, DSWEEP / 2, DR) + '" fill="none" stroke="#2A2C31" stroke-width="' + sw + '" stroke-linecap="round"/>';
+    svg += '<path d="' + dArc(-DSWEEP / 2, DSWEEP / 2, DR) + '" fill="none" stroke="#C9A227" stroke-opacity=".45" stroke-width="' + sw + '" stroke-linecap="round"/>';
     (o.zones || []).forEach(function (z) {
       svg += '<path d="' + dArc(ang(z[0]), ang(z[1]), DR + sw / 2 + 4) + '" fill="none" stroke="' + z[2] + '" stroke-opacity=".6" stroke-width="2.5"/>';
     });
@@ -247,7 +247,7 @@
     }
     if (o.ends) [[-DSWEEP / 2, o.ends[0]], [DSWEEP / 2, o.ends[1]]].forEach(function (e) {
       var p = dPt(e[0], DR);
-      svg += '<text x="' + p[0] + '" y="' + (+p[1] + sw / 2 + 19).toFixed(1) + '" text-anchor="middle" font-size="19" font-weight="800" fill="#C9C4B8" font-family="Manrope,sans-serif">' + e[1] + '</text>';
+      svg += '<text x="' + p[0] + '" y="' + (+p[1] + sw / 2 + 19).toFixed(1) + '" text-anchor="middle" font-size="23" font-weight="800" fill="#F2D27A" font-family="Manrope,sans-serif">' + e[1] + '</text>';
     });
     var len = DR - 26, nw = 5, as = ang(o.min);   // needle starts at the left end of the scale
     svg += '<g class="p75n" data-a="' + a1.toFixed(1) + '" data-r="' + as.toFixed(1) + '" style="transform-origin:' + DCX + 'px ' + DCY + 'px;transform:rotate(' + as.toFixed(1) + 'deg)">' +
