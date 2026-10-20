@@ -357,7 +357,7 @@
 
   // The page needs kit v3 or newer. A browser tab opened before an update can hold an older cached kit,
   // so load a fresh one first instead of failing on a missing function.
-  var NEED_KIT = 4;
+  var NEED_KIT = 5;
   function bind() { K = window.P75KIT; C = K.C; tag = K.tag; col = K.col; cd = K.cd; }
   function withKit(go) {
     if (window.P75KIT && (window.P75KIT.v || 0) >= NEED_KIT) { bind(); return go(); }
